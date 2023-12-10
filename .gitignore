@@ -1,0 +1,18 @@
+# Compiled JavaScript files
+dist/**/*.js
+dist/**/*.js.map
+
+# TypeScript v1 declaration files
+typings/
+
+# Node.js dependency directory
+node_modules/
+
+# Log files
+*.log
+
+# puppeteer
+.cache/puppeteer
+
+# firestore emulator data
+firestoreData
