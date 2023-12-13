@@ -1,30 +1,33 @@
-import { Request, Response } from "express";
-import { getScrapedReviewsData } from "../services/reviewRates";
-import { reviewDataService } from "../data/reviews";
+import { NextFunction, Request, Response } from "express";
+import { reviewsDataService } from "../services/data/reviews";
 import { WriteResult } from "firebase-admin/firestore";
-import puppeteer from "puppeteer";
+import { puppeteerReviewsService } from "../services/puppeteer";
 
-export const scrapeReviewsController = async (req: Request, res: Response) => {
+export const scrapeReviewsController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const pageName = req.params.pageName;
 
-		// Launch puppeteer browser
-		const browser = await puppeteer.launch({
-			headless: "new",
-			args: ["--no-sandbox", "--disable-setuid-sandbox"],
-		});
-
 		// Scrape new reviews data and add to db
-		const scrapedReviews = await getScrapedReviewsData(pageName, browser);
+		const scrapedReviews = await puppeteerReviewsService.scrapeNewReviews(
+			pageName
+		);
 		let batch: WriteResult[] = [];
 		if (scrapedReviews.length > 0) {
-			batch = await reviewDataService.addReviewsBatchToApartment(
+			batch = await reviewsDataService.addReviewsBatchToApartment(
 				scrapedReviews,
 				pageName
 			);
 		}
-		res.json({ msg: `Successfully added ${batch.length} new reviews` });
+		if (batch.length === 0) {
+			res.json({ msg: `There are no new reviews` });
+		} else {
+			res.json({ msg: `Successfully added ${batch.length} new reviews` });
+		}
 	} catch (error) {
-		throw new Error(`Failed to scrape reviews ${error}`);
+		return next(error);
 	}
 };

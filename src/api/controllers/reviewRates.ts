@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { reviewDataService } from "../data/reviews";
+import { reviewsDataService } from "../services/data/reviews";
 import { Review } from "../models";
 
 export const getRevieRatesController = async (
@@ -10,14 +10,16 @@ export const getRevieRatesController = async (
 	try {
 		const pageName = req.params.pageName;
 
-		const reviewRatesQuery = await reviewDataService.getReviewRatesOfApartment(
+		const apartmentDoc = await reviewsDataService.getApartment(pageName);
+		if (!apartmentDoc.exists) {
+			return res.json({ msg: `Failed to find ${pageName}` });
+		}
+		const reviewRatesQuery = await reviewsDataService.getReviewRatesOfApartment(
 			pageName
 		);
 
-		// TODO Differentiate when no appartment is found and when appartment found has no new reviews
 		if (reviewRatesQuery.empty) {
-			// TODO Response should be in json 
-			return res.send(`${pageName} has no review rates.`);
+			return res.json({ msg: `${pageName} has no review rates.` });
 		}
 
 		const reviewRates: number[] = [];

@@ -1,16 +1,22 @@
-import { QuerySnapshot } from "firebase-admin/firestore";
+import { DocumentSnapshot, QuerySnapshot } from "firebase-admin/firestore";
 import { getFirestore } from "firebase-admin/firestore";
-import { Review } from "../../models";
+import { Review } from "../../../models";
 import { firestore } from "firebase-admin";
 
 const collection = "apartments";
 const subCollection = "reviews";
 
-export const getApartments = async (): Promise<QuerySnapshot> => {
-	const db =firestore();
+export const getAllApartments = async (): Promise<QuerySnapshot> => {
+	const db = firestore();
 	const query = await db.collection(collection).get();
 	return query;
-}
+};
+
+export const getApartment = async (id: string): Promise<DocumentSnapshot> => {
+	const db = firestore();
+	const query = await db.collection(collection).doc(id).get();
+	return query;
+};
 
 export const getMostRecentReviewOfApartment = async (
 	id: string

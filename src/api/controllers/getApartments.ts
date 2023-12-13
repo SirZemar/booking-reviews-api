@@ -1,23 +1,24 @@
-import { Request, Response } from "express";
-import { reviewDataService } from "../data/reviews";
+import { Request, Response, NextFunction } from "express";
+import { reviewsDataService } from "../services/data/reviews";
 import { Apartment } from "../models/apartment";
 
-//TODO THIS QUERY IS WRONG! Should return a name and the review true average   
-export const getApartmentsController = async (req: Request, res: Response) => {
+export const getApartmentsController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
-		const apartmentsQuery = await reviewDataService.getApartments();
+		const apartmentsQuery = await reviewsDataService.getAllApartments();
 
 		if (apartmentsQuery.empty) {
-			res.json({ message: "No apartments were found." });
+			res.json({ msg: "No apartments were found." });
 		}
-    const apartments: Apartment[] = [];
+		const apartments: Apartment[] = apartmentsQuery.docs.map(
+			(apartment) => apartment.data() as Apartment
+		);
 
-		apartmentsQuery.forEach((apartmentQuery) => {
-			apartments.push(apartmentQuery.data() as Apartment);
-		});
-
-    res.send({apartments});
+		res.send({ apartments });
 	} catch (error) {
-    throw new Error(`Failed to get apartments. ${error}`);
-  }
+		return next(error);
+	}
 };

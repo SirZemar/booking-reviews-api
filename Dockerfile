@@ -12,7 +12,8 @@ WORKDIR /app
 COPY package*.json .
 
 # Install production dependencies.
-RUN npm ci --omit=dev
+# RUN npm ci --omit=dev
+RUN npm install
 
 COPY . .
 
@@ -22,7 +23,11 @@ RUN npm uninstall puppeteer
 
 RUN npm i puppeteer
 
-RUN npm run build
+RUN if [ "$NODE_ENV" = "development" ]; then \
+    echo "Running in development mode, skipping build"; \
+  else \
+    npm run build; \
+  fi
 
 EXPOSE 8080
 

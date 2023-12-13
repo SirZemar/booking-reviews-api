@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: booking-api-development
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - NODE_ENV=development
+      - GOOGLE_APPLICATION_CREDENTIALS=/tmp/keys/booking-reviews-api.json 
+    volumes:
+      - ./dist:/app/dist
+      - ./src:/app/src
+      - /tmp/keys/booking-reviews-api.json:/tmp/keys/booking-reviews-api.json:ro
+    command: ["npm", "run", "dev"]

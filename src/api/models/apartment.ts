@@ -1,6 +1,8 @@
-import { Review } from "./review"
+import { Timestamp } from "firebase-admin/firestore";
 
 export type Apartment = {
-  reviews: Review[],
-  reviewRateAverage: number,
-}
+	id: string;
+	reviewRateAverage: number;
+	reviewsCount: number;
+	lastScrape: Timestamp;
+};

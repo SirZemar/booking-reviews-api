@@ -5,8 +5,8 @@
 		"build": "tsc",
 		"build:watch": "tsc --watch",
 		"start": "node dist/index.js",
-		"logs": "firebase functions:log",
-		"serve:dev": "nodemon dist/index.js"
+		"dev": "nodemon dist/index.js",
+		"logs": "firebase functions:log"
 	},
 	"engines": {
 		"node": "18"

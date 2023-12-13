@@ -18,10 +18,6 @@ export type Analytics = {
 	numberOfTopRateReviewsNeeded: number;
 };
 
-export type Review = {
-	date: any;
-	rate: number;
-	id: string;
-};
-
 export * as Dates from "./dates";
+export { Review } from "./review";
+export { Apartment } from "./apartment";
