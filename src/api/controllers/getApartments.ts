@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { reviewsDataService } from "../services/data/reviews";
+import { reviewsDataService } from "../services/firestore/reviews";
 import { Apartment } from "../models/apartment";
 
 export const getApartmentsController = async (

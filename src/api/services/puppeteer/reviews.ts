@@ -1,7 +1,6 @@
 import puppeteer, { HTTPRequest, Page } from "puppeteer";
 import { Review, ReviewRaw } from "../../models/review";
-import { logger } from "firebase-functions/v1";
-import { reviewsDataService } from "../data/reviews";
+import { reviewsDataService } from "../firestore/reviews";
 import { convertBookingReviewDateToTimestamp } from "../../utils/convertBookingReviewDate";
 
 export const scrapeNewReviews = async (pageName: string) => {
@@ -150,7 +149,7 @@ const scrapeReviewsFromPage = async (page: Page): Promise<ReviewRaw[]> => {
 					if (scrapedReviewRate) {
 						reviewRate = parseInt(scrapedReviewRate);
 					} else {
-						logger.warn(
+						console.warn(
 							`Failed to scrape review rate from element in page ${page} with selector "${reviewRateSelector}"`
 						);
 						scrapeError = true;
@@ -163,7 +162,7 @@ const scrapeReviewsFromPage = async (page: Page): Promise<ReviewRaw[]> => {
 					if (scrapedReviewDate) {
 						reviewDate = scrapedReviewDate;
 					} else {
-						logger.warn(
+						console.warn(
 							`Failed to scrape review date from element in page ${page} with selector "${reviewDateSelector}"`
 						);
 						scrapeError = true;
@@ -175,7 +174,7 @@ const scrapeReviewsFromPage = async (page: Page): Promise<ReviewRaw[]> => {
 					if (scrapedReviewUrl) {
 						reviewId = scrapedReviewUrl;
 					} else {
-						logger.warn(
+						console.warn(
 							`Failed to scrape review url from element in page ${page} with attribute "${reviewUrlAttribute}"`
 						);
 						scrapeError = true;

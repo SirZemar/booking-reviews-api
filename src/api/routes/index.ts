@@ -1,7 +1,7 @@
 import { getRevieRatesController } from "../controllers/reviewRates";
 import * as express from "express";
 import * as admin from "firebase-admin";
-import { scrapeReviewsController } from "../controllers/scrapeReviews";
+import { scrapeReviewsController } from "../controllers/scrapeReviewsController";
 import { getApartmentsController } from "../controllers/getApartments";
 
 admin.initializeApp();

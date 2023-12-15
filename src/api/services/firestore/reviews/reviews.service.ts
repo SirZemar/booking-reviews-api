@@ -8,21 +8,21 @@ const subCollection = "reviews";
 
 export const getAllApartments = async (): Promise<QuerySnapshot> => {
 	const db = firestore();
-	const query = await db.collection(collection).get();
-	return query;
+	const querySnapshot = await db.collection(collection).get();
+	return querySnapshot;
 };
 
 export const getApartment = async (id: string): Promise<DocumentSnapshot> => {
 	const db = firestore();
-	const query = await db.collection(collection).doc(id).get();
-	return query;
+	const docSnapshot = await db.collection(collection).doc(id).get();
+	return docSnapshot;
 };
 
 export const getMostRecentReviewOfApartment = async (
 	id: string
 ): Promise<QuerySnapshot> => {
 	const db = getFirestore();
-	const query = await db
+	const querySnapshot = await db
 		.collection(collection)
 		.doc(id)
 		.collection(subCollection)
@@ -30,19 +30,19 @@ export const getMostRecentReviewOfApartment = async (
 		.orderBy("id", "asc")
 		.limit(1)
 		.get();
-	return query;
+	return querySnapshot;
 };
 export const getReviewRatesOfApartment = async (
 	id: string
 ): Promise<QuerySnapshot> => {
 	const db = getFirestore();
-	const query = await db
+	const querySnapshot = await db
 		.collection(collection)
 		.doc(id)
 		.collection(subCollection)
 		.select("rate")
 		.get();
-	return query;
+	return querySnapshot;
 };
 
 export const addReviewsBatchToApartment = async (
@@ -61,4 +61,17 @@ export const addReviewsBatchToApartment = async (
 		batch.set(docRef, review);
 	});
 	return await batch.commit();
+};
+
+export const reviewsCount = async (id: string) => {
+	const db = getFirestore();
+
+	const aggregateQuery = await db
+		.collection(collection)
+		.doc(id)
+		.collection("reviews")
+		.count()
+		.get();
+
+	return aggregateQuery;
 };
