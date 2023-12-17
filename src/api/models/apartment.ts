@@ -2,7 +2,7 @@ import { Timestamp } from "firebase-admin/firestore";
 
 export type Apartment = {
 	id: string;
-	reviewRateAverage: number;
+	reviewRatingAverage: number;
 	reviewsCount: number;
 	lastScrape: Timestamp;
 };

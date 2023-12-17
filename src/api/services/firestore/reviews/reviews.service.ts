@@ -32,7 +32,7 @@ export const getMostRecentReviewOfApartment = async (
 		.get();
 	return querySnapshot;
 };
-export const getReviewRatesOfApartment = async (
+export const getReviewRatingsOfApartment = async (
 	id: string
 ): Promise<QuerySnapshot> => {
 	const db = getFirestore();

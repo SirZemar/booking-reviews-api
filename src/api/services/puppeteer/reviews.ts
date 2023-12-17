@@ -1,61 +1,8 @@
 import puppeteer, { HTTPRequest, Page } from "puppeteer";
-import { Review, ReviewRaw } from "../../models/review";
-import { reviewsDataService } from "../firestore/reviews";
-import { convertBookingReviewDateToTimestamp } from "../../utils/convertBookingReviewDate";
-
-export const scrapeNewReviews = async (pageName: string) => {
-	const reviews = [];
-
-	// Creates new page in booking review list and navigate to it
-	const page = await createReviewsListPage();
-	await goToReviewsListPage(page, pageName);
-
-	// Get value of total number reviews in the list
-	const totalPages = await scrapeNumberOfTotalReviewsPages(page);
-
-	// Get most recent review stored in db
-	const mostRecentReviewQuery =
-		await reviewsDataService.getMostRecentReviewOfApartment(pageName);
-
-	// Get all review rates and push results into reviewRates array
-	const maxOffset = (totalPages - 1) * 10;
-
-	for (let offset = 0; offset <= maxOffset; offset += 10) {
-		await goToReviewsListPage(page, pageName, offset);
-
-		const scrapedReviewsRaw = await scrapeReviewsFromPage(page);
-
-		// Reviews data is in a specific string format on booking and it needs to be converted into a timestamp
-		const scrapedReviews = scrapedReviewsRaw.map(
-			(review: ReviewRaw): Review => {
-				const date = convertBookingReviewDateToTimestamp(review.date);
-				return { ...review, date };
-			}
-		);
-
-		// If there is a most recent review compare with scraped review. Else, push scraped without comparing
-		if (mostRecentReviewQuery.empty) {
-			reviews.push(...scrapedReviews);
-		} else {
-			const mostRecentReview = mostRecentReviewQuery.docs[0].data() as Review;
-			const recentReviewsData = filterNewReviews(
-				scrapedReviews,
-				mostRecentReview
-			);
-
-			reviews.push(...recentReviewsData);
-
-			// Loop stop when last page or when a already stored review is found
-			if (recentReviewsData.length < 10) {
-				break;
-			}
-		}
-	}
-	return reviews;
-};
+import { ReviewRaw } from "../../models/review";
 
 // Puppeteer service that creates page of booking reviews list
-const createReviewsListPage = async (): Promise<Page> => {
+export const createReviewsListPage = async (): Promise<Page> => {
 	try {
 		// Launch puppeteer
 		const browser = await puppeteer.launch({
@@ -84,13 +31,13 @@ const createReviewsListPage = async (): Promise<Page> => {
 	}
 };
 
-const goToReviewsListPage = async (
+export const goToReviewsListPage = async (
 	page: Page,
-	pageName: string,
+	apartmentId: string,
 	offset?: number
 ): Promise<string> => {
 	let url: string;
-	url = `https://www.booking.com/reviewlist.pt-pt.html?pagename=${pageName}&;cc1=pt&rows=10&sort=f_recent_desc`;
+	url = `https://www.booking.com/reviewlist.pt-pt.html?pagename=${apartmentId}&;cc1=pt&rows=10&sort=f_recent_desc`;
 
 	if (offset) {
 		url = url + `&offset=${offset}`;
@@ -104,7 +51,9 @@ const goToReviewsListPage = async (
 };
 
 // Puppeteer get total of booking reviews service
-const scrapeNumberOfTotalReviewsPages = async (page: Page): Promise<number> => {
+export const scrapeNumberOfTotalReviewsPages = async (
+	page: Page
+): Promise<number> => {
 	try {
 		const totalReviewsPages: number = await page.$eval(
 			".bui-pagination__pages > .bui-pagination__list > .bui-pagination__item:last-child > a",
@@ -125,32 +74,34 @@ const scrapeNumberOfTotalReviewsPages = async (page: Page): Promise<number> => {
 	}
 };
 
-const scrapeReviewsFromPage = async (page: Page): Promise<ReviewRaw[]> => {
+export const scrapeReviewsFromPage = async (
+	page: Page
+): Promise<ReviewRaw[]> => {
 	try {
 		const scrapedReviews = await page.$$eval(
 			".review_list_new_item_block",
 			(els) =>
 				els.map((reviewElement) => {
-					let reviewRate = 0;
+					let reviewRating = 0;
 					let reviewDate = "";
 					let reviewId = "";
 					let scrapeError = false;
 
-					const reviewRateSelector = ".bui-review-score__badge";
+					const reviewRatingSelector = ".bui-review-score__badge";
 					const reviewDateSelector =
 						".c-review-block__right .c-review-block__date";
 					const reviewUrlAttribute = "data-review-url";
 
 					// Get rate
-					const reviewRateElement =
-						reviewElement.querySelector(reviewRateSelector);
+					const reviewRatingElement =
+						reviewElement.querySelector(reviewRatingSelector);
 
-					const scrapedReviewRate = reviewRateElement?.textContent;
-					if (scrapedReviewRate) {
-						reviewRate = parseInt(scrapedReviewRate);
+					const scrapedReviewRating = reviewRatingElement?.textContent;
+					if (scrapedReviewRating) {
+						reviewRating = parseInt(scrapedReviewRating);
 					} else {
 						console.warn(
-							`Failed to scrape review rate from element in page ${page} with selector "${reviewRateSelector}"`
+							`Failed to scrape review rate from element in page ${page} with selector "${reviewRatingSelector}"`
 						);
 						scrapeError = true;
 					}
@@ -180,7 +131,7 @@ const scrapeReviewsFromPage = async (page: Page): Promise<ReviewRaw[]> => {
 						scrapeError = true;
 					}
 					if (!scrapeError) {
-						return { rate: reviewRate, date: reviewDate, id: reviewId };
+						return { rate: reviewRating, date: reviewDate, id: reviewId };
 					} else {
 						return { rate: -1, date: "remove", id: "remove" };
 					}
@@ -191,45 +142,4 @@ const scrapeReviewsFromPage = async (page: Page): Promise<ReviewRaw[]> => {
 	} catch (error) {
 		throw new Error(`Failed to scrape reviews from page ${page}: ${error}`);
 	}
-};
-
-const filterNewReviews = (
-	reviews: Review[],
-	mostRecentReview: Review
-): Review[] => {
-	const sortedReviews = reviews.sort((a, b) => {
-		// Compare by date in descending order
-		if (a.date.valueOf() > b.date.valueOf()) {
-			return -1;
-		} else if (a.date.valueOf() < b.date.valueOf()) {
-			return 1;
-		} else {
-			// If dates are equal, compare by ID
-			if (a.id < b.id) {
-				return -1;
-			} else if (a.id > b.id) {
-				return 1;
-			} else {
-				return 0; // If both date and ID are equal, no change in order
-			}
-		}
-	});
-
-	const newReviews: Review[] = [];
-
-	for (let i = 0; i < sortedReviews.length; i++) {
-		if (sortedReviews[i].date.valueOf() > mostRecentReview.date.valueOf()) {
-			newReviews.push(sortedReviews[i]);
-		} else if (
-			sortedReviews[i].date.valueOf() === mostRecentReview.date.valueOf()
-		) {
-			if (sortedReviews[i].id !== mostRecentReview.id) {
-				newReviews.push(sortedReviews[i]);
-			} else {
-				break;
-			}
-		}
-	}
-
-	return newReviews;
 };

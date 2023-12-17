@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { reviewsDataService } from "../services/firestore/reviews";
-import { puppeteerReviewsService } from "../services/puppeteer";
 import { reviewsService } from "../services/reviews";
 
 export const scrapeReviewsController = async (
@@ -9,11 +8,9 @@ export const scrapeReviewsController = async (
 	next: NextFunction
 ) => {
 	try {
-		const apartmentId = req.params.pageName;
+		const apartmentId = req.params.apartmentId;
 
-		const scrapedReviews = await puppeteerReviewsService.scrapeNewReviews(
-			apartmentId
-		);
+		const scrapedReviews = await reviewsService.scrapeNewReviews(apartmentId);
 
 		if (scrapedReviews.length === 0) {
 			res.json({ msg: `There are no new reviews` });
