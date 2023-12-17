@@ -1,19 +1,8 @@
-import { getRevieRatesController } from "../controllers/reviewRates";
 import * as express from "express";
-import * as admin from "firebase-admin";
-import { scrapeReviewsController } from "../controllers/scrapeReviewsController";
-import { getApartmentsController } from "../controllers/getApartments";
+import apartmentsRouter from "./apartments.route";
 
-admin.initializeApp();
-// const db = admin.firestore();
 const router = express.Router();
 
-router.get("/", (req: express.Request, res: express.Response) => {
-	res.send("Welcome to booking review rates api");
-});
-
-router.get("/apartments", getApartmentsController);
-router.get("/scrapeReviews/:pageName", scrapeReviewsController);
-router.get("/reviewRates/:pageName", getRevieRatesController);
+router.use("/apartments", apartmentsRouter);
 
 export default router;
