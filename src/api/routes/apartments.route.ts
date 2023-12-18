@@ -14,4 +14,6 @@ apartmentsRouter.get("/:apartmentId/scrapeReviews", scrapeReviews);
 
 apartmentsRouter.get("/:apartmentId/getReviewRatings", getReviewRatings);
 
+//TODO Delete apartment
+
 export default apartmentsRouter;

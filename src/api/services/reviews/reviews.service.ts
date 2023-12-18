@@ -5,60 +5,65 @@ import { reviewsDataService } from "../firestore/reviews";
 import { puppeteerReviewsService } from "../puppeteer";
 
 export const scrapeNewReviews = async (apartmentId: string) => {
-	const reviews = [];
+	try {
+		const reviews = [];
 
-	// Creates new page in booking review list and navigate to it
-	const page = await puppeteerReviewsService.createReviewsListPage();
-	await puppeteerReviewsService.goToReviewsListPage(page, apartmentId);
+		// Creates new page in booking review list and navigate to it
+		const page = await puppeteerReviewsService.createReviewsListPage();
+		await puppeteerReviewsService.goToReviewsListPage(page, apartmentId);
 
-	// Get value of total number reviews in the list
-	const totalPages =
-		await puppeteerReviewsService.scrapeNumberOfTotalReviewsPages(page);
+		// Get value of total number reviews in the list
+		const totalPages =
+			await puppeteerReviewsService.scrapeNumberOfTotalReviewsPages(page);
 
-	// Get most recent review stored in db
-	const mostRecentReviewQuery =
-		await reviewsDataService.getMostRecentReviewOfApartment(apartmentId);
+		// Get most recent review stored in db
+		const mostRecentReviewQuery =
+			await reviewsDataService.getMostRecentReviewOfApartment(apartmentId);
 
-	// Get all review rates and push results into reviewRatings array
-	const maxOffset = (totalPages - 1) * 10;
+		// Get all review rates and push results into reviewRatings array
+		const maxOffset = (totalPages - 1) * 10;
 
-	for (let offset = 0; offset <= maxOffset; offset += 10) {
-		await puppeteerReviewsService.goToReviewsListPage(
-			page,
-			apartmentId,
-			offset
-		);
-
-		const scrapedReviewsRaw =
-			await puppeteerReviewsService.scrapeReviewsFromPage(page);
-
-		// Reviews data is in a specific string format on booking and it needs to be converted into a timestamp
-		const scrapedReviews = scrapedReviewsRaw.map(
-			(review: ReviewRaw): Review => {
-				const date = convertBookingReviewDateToTimestamp(review.date);
-				return { ...review, date };
-			}
-		);
-
-		// If there is a most recent review compare with scraped review. Else, push scraped without comparing
-		if (mostRecentReviewQuery.empty) {
-			reviews.push(...scrapedReviews);
-		} else {
-			const mostRecentReview = mostRecentReviewQuery.docs[0].data() as Review;
-			const recentReviewsData = filterNewReviews(
-				scrapedReviews,
-				mostRecentReview
+		for (let offset = 0; offset <= maxOffset; offset += 10) {
+			await puppeteerReviewsService.goToReviewsListPage(
+				page,
+				apartmentId,
+				offset
 			);
 
-			reviews.push(...recentReviewsData);
+			const scrapedReviewsRaw =
+				await puppeteerReviewsService.scrapeReviewsFromPage(page);
 
-			// Loop stop when last page or when a already stored review is found
-			if (recentReviewsData.length < 10) {
-				break;
+			// Reviews data is in a specific string format on booking and it needs to be converted into a timestamp
+			const scrapedReviews = scrapedReviewsRaw.map(
+				(review: ReviewRaw): Review => {
+					const date = convertBookingReviewDateToTimestamp(review.date);
+					return { ...review, date };
+				}
+			);
+
+			// If there is a most recent review compare with scraped review. Else, push scraped without comparing
+			if (mostRecentReviewQuery.empty) {
+				reviews.push(...scrapedReviews);
+			} else {
+				const mostRecentReview = mostRecentReviewQuery.docs[0].data() as Review;
+				const recentReviewsData = filterNewReviews(
+					scrapedReviews,
+					mostRecentReview
+				);
+
+				reviews.push(...recentReviewsData);
+
+				// Loop stop when last page or when a already stored review is found
+				if (recentReviewsData.length < 10) {
+					break;
+				}
 			}
 		}
+		return reviews;
+	} catch (error) {
+		throw new Error(`Failed to scrape new reviews. ${error}`);
 	}
-	return reviews;
+
 };
 
 export const handleBatchReviewsCreate = async (id: string) => {
