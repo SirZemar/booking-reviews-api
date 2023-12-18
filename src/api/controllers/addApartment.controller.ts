@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { apartmentDataService } from "../services/firestore/apartments";
-// import { apartmentDataService } from "../services/firestore/apartments";
 
-export const addApartmentController = async (
+export const addApartment = async (
 	req: Request,
 	res: Response,
 	next: NextFunction

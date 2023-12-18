@@ -1,5 +1,5 @@
 import puppeteer, { HTTPRequest, Page } from "puppeteer";
-import { ReviewRaw } from "../../models/review";
+import { ReviewRaw } from "../../models/review.model";
 
 // Puppeteer service that creates page of booking reviews list
 export const createReviewsListPage = async (): Promise<Page> => {

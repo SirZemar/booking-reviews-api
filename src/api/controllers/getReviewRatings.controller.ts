@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { reviewsDataService } from "../services/firestore/reviews";
 import { Review } from "../models";
 
-export const getReviewRatingsController = async (
+export const getReviewRatings = async (
 	req: Request,
 	res: Response,
 	next: NextFunction

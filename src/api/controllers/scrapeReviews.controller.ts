@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { reviewsDataService } from "../services/firestore/reviews";
 import { reviewsService } from "../services/reviews";
 
-export const scrapeReviewsController = async (
+export const scrapeReviews = async (
 	req: Request,
 	res: Response,
 	next: NextFunction

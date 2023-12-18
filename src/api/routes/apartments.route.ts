@@ -1,20 +1,17 @@
 import express = require("express");
-import { getApartmentsController } from "../controllers/getApartments";
-import { addApartmentController } from "../controllers/addApartmentController";
-import { scrapeReviewsController } from "../controllers/scrapeReviewsController";
-import { getReviewRatingsController } from "../controllers/reviewRatings";
+import { getApartments } from "../controllers/getApartments.controller";
+import { addApartment } from "../controllers/addApartment.controller";
+import { scrapeReviews } from "../controllers/scrapeReviews.controller";
+import { getReviewRatings } from "../controllers/getReviewRatings.controller";
 
 const apartmentsRouter = express.Router();
 
-apartmentsRouter.get("/", getApartmentsController);
+apartmentsRouter.get("/", getApartments);
 
-apartmentsRouter.post("/:apartmentId/add", addApartmentController);
+apartmentsRouter.post("/:apartmentId/add", addApartment);
 
-apartmentsRouter.get("/:apartmentId/scrapeReviews", scrapeReviewsController);
+apartmentsRouter.get("/:apartmentId/scrapeReviews", scrapeReviews);
 
-apartmentsRouter.get(
-	"/:apartmentId/getReviewRatings",
-	getReviewRatingsController
-);
+apartmentsRouter.get("/:apartmentId/getReviewRatings", getReviewRatings);
 
 export default apartmentsRouter;

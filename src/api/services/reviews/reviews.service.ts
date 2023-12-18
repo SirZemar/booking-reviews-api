@@ -1,4 +1,4 @@
-import { Review, ReviewRaw } from "../../models/review";
+import { Review, ReviewRaw } from "../../models/review.model";
 import { convertBookingReviewDateToTimestamp } from "../../utils/convertBookingReviewDate";
 import { apartmentDataService } from "../firestore/apartments";
 import { reviewsDataService } from "../firestore/reviews";
