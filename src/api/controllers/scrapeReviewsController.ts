@@ -16,6 +16,9 @@ export const scrapeReviewsController = async (
 			res.json({ msg: `There are no new reviews` });
 		}
 
+		// Handlers when new scrape of reviews is done
+		await reviewsService.handleScrapeReviews(apartmentId);
+
 		const batch = await reviewsDataService.addReviewsBatchToApartment(
 			scrapedReviews,
 			apartmentId

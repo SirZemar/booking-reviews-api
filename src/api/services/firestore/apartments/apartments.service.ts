@@ -1,4 +1,4 @@
-import { getFirestore } from "firebase-admin/firestore";
+import { Timestamp, getFirestore } from "firebase-admin/firestore";
 import { reviewsDataService } from "../reviews";
 
 const collection = "apartments";
@@ -7,6 +7,16 @@ export const addNewApartment = async (id: string) => {
 	const db = getFirestore();
 
 	await db.collection(collection).doc(id).set({ id });
+};
+
+export const setLastReviewsScrape = async (id: string) => {
+	const db = getFirestore();
+	const lastReviewsScrape = Timestamp.now();
+
+	await db
+		.collection(collection)
+		.doc(id)
+		.set({ lastReviewsScrape }, { merge: true });
 };
 
 export const setReviewsCount = async (id: string) => {

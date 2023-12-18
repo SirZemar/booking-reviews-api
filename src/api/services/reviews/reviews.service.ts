@@ -76,12 +76,23 @@ export const handleBatchReviewsCreate = async (id: string) => {
 		const totalSum = reviewRatings.reduce((prev, n) => prev + n);
 		const reviewsAverage = totalSum / reviewRatings.length;
 		await apartmentDataService.setReviewsRatingAverage(id, reviewsAverage);
+
+		//
 	} catch (error) {
 		throw new Error(
 			`Failed when handling new batch of created reviews. ${error}`
 		);
 	}
 };
+
+export const handleScrapeReviews = async (id: string) => {
+	try {
+		await apartmentDataService.setLastReviewsScrape(id);
+	} catch (error) {
+		throw new Error(`Failed when handling last scrape reviews. ${error}`);
+	}
+};
+
 export const filterNewReviews = (
 	reviews: Review[],
 	mostRecentReview: Review
