@@ -1,12 +1,31 @@
 import { Timestamp, getFirestore } from "firebase-admin/firestore";
 import { reviewsDataService } from "../reviews";
+import { Apartment } from "../../../models";
 
 const collection = "apartments";
 
-export const addNewApartment = async (id: string) => {
+export const addNewApartment = async (
+	id: string,
+	payload: Pick<Apartment, "name">
+) => {
 	const db = getFirestore();
+	await db.collection(collection).doc(id).set({ id, name: payload.name });
+};
 
-	await db.collection(collection).doc(id).set({ id });
+export const patchApartment = async (
+	id: string,
+	payload: Partial<Apartment>
+) => {
+	const db = getFirestore();
+	await db
+		.collection(collection)
+		.doc(id)
+		.set({ id, name: payload.name }, { merge: true });
+};
+
+export const deleteApartment = async (id: string) => {
+	const db = getFirestore();
+	await db.collection(collection).doc(id).delete();
 };
 
 export const setLastReviewsScrape = async (id: string) => {

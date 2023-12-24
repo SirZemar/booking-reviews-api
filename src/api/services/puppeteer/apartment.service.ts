@@ -1,4 +1,4 @@
-import puppeteer, { HTTPRequest, Page } from "puppeteer";
+import puppeteer, { HTTPRequest, HTTPResponse, Page } from "puppeteer";
 
 export const createApartmentPage = async (): Promise<Page> => {
 	try {
@@ -33,13 +33,14 @@ export const createApartmentPage = async (): Promise<Page> => {
 export const gotoApartmentPage = async (
 	page: Page,
 	apartmentId: string
-): Promise<string> => {
+): Promise<HTTPResponse | null> => {
 	let url: string;
 	url = `https://www.booking.com/hotel/pt/${apartmentId}.pt-pt.html`;
 
 	const response = await page.goto(url);
-	if (!response?.ok()) {
-		throw new Error(`Booking apartment not found with url ${url}`);
-	}
-	return url;
+	// if (!response?.ok()) {
+	// 	throw new Error(`Booking apartment not found with url ${url}`);
+	// }
+
+	return response;
 };

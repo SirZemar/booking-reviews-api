@@ -9,12 +9,19 @@ export const addApartment = async (
 ) => {
 	try {
 		const apartmentId = req.params.apartmentId;
+		const payload = req.body;
 
 		// Verify if booking apartment exist
-		await apartmentService.verifyBookingApartment(apartmentId);
+		const isApartmentValid = await apartmentService.verifyBookingApartment(
+			apartmentId
+		);
 
-		await apartmentDataService.addNewApartment(apartmentId);
-		res.json({ msg: `Successfully added apartment ${apartmentId}` });
+		if (isApartmentValid) {
+			await apartmentDataService.addNewApartment(apartmentId, payload);
+			res.json({ msg: `Successfully added apartment ${apartmentId}` });
+		} else {
+			res.json({ msg: `${apartmentId} is not a valid booking apartment` });
+		}
 	} catch (error) {
 		next(error);
 	}

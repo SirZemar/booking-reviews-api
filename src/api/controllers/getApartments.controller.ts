@@ -17,7 +17,7 @@ export const getApartments = async (
 			(apartment) => apartment.data() as Apartment
 		);
 
-		res.send({ apartments });
+		res.send(apartments);
 	} catch (error) {
 		return next(error);
 	}

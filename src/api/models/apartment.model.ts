@@ -3,8 +3,9 @@ import { Review } from "./review.model";
 
 export type Apartment = {
 	id: string;
-	reviewRatingAverage: number;
+	reviewsRatingAverage: number;
 	reviewsCount: number;
 	lastReviewsScrape: Timestamp;
 	reviews: Review[];
+	name: string;
 };

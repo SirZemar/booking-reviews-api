@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { reviewsDataService } from "../services/firestore/reviews";
 import { reviewsService } from "../services/reviews";
+import { apartmentService } from "../services/apartment";
 
 export const scrapeReviews = async (
 	req: Request,
@@ -10,6 +11,12 @@ export const scrapeReviews = async (
 	try {
 		const apartmentId = req.params.apartmentId;
 
+		const isApartmentValid = await apartmentService.verifyBookingApartment(
+			apartmentId
+		);
+		if (!isApartmentValid) {
+			res.json({ msg: `${apartmentId} is not a valid apartment` });
+		}
 		const scrapedReviews = await reviewsService.scrapeNewReviews(apartmentId);
 
 		if (scrapedReviews.length === 0) {
