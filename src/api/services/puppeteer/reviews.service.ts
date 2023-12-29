@@ -55,6 +55,12 @@ export const scrapeNumberOfTotalReviewsPages = async (
 	page: Page
 ): Promise<number> => {
 	try {
+
+		const pagination = await page.$("c-pagination");
+
+		if (!pagination) {
+			return 1;
+		}
 		const totalReviewsPages: number = await page.$eval(
 			".bui-pagination__pages > .bui-pagination__list > .bui-pagination__item:last-child > a",
 			(el) => {

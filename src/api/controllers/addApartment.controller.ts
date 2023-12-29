@@ -23,6 +23,6 @@ export const addApartment = async (
 			res.json({ msg: `${apartmentId} is not a valid booking apartment` });
 		}
 	} catch (error) {
-		next(error);
+		return next(error);
 	}
 };

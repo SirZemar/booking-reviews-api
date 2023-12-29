@@ -12,6 +12,6 @@ export const deleteApartment = async (
 		await apartmentDataService.deleteApartment(apartmentId);
 		res.json({ msg: `Successfully deleted apartment ${apartmentId}` });
 	} catch (error) {
-		next(error);
+		return next(error);
 	}
 };

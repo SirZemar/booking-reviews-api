@@ -13,6 +13,6 @@ export const patchApartment = async (
 		await apartmentDataService.patchApartment(apartmentId, payload);
 		res.json({ msg: `Successfully edited apartment ${apartmentId}` });
 	} catch (error) {
-		next(error);
+		return next(error);
 	}
 };

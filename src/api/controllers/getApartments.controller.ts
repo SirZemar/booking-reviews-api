@@ -12,12 +12,13 @@ export const getApartments = async (
 
 		if (apartmentsQuery.empty) {
 			res.json({ msg: "No apartments were found." });
-		}
-		const apartments: Apartment[] = apartmentsQuery.docs.map(
-			(apartment) => apartment.data() as Apartment
-		);
+		} else {
+			const apartments: Apartment[] = apartmentsQuery.docs.map(
+				(apartment) => apartment.data() as Apartment
+			);
 
-		res.send(apartments);
+			res.send(apartments);
+		}
 	} catch (error) {
 		return next(error);
 	}

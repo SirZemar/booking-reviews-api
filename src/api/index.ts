@@ -10,7 +10,10 @@ export const createServer = () => {
 	app.use(
 		cors({
 			// credentials: true,
-			origin: true,
+			origin: [
+				"http://localhost:4200",
+				"https://adorable-horse-0a269a.netlify.app",
+			],
 		})
 	);
 
