@@ -15,7 +15,7 @@ export const scrapeReviews = async (
 			apartmentId
 		);
 		if (!isApartmentValid) {
-			res.json({ msg: `${apartmentId} is not a valid apartment` });
+			res.status(500).json({ msg: `${apartmentId} is not a valid apartment` });
 		}
 		const scrapedReviews = await reviewsService.scrapeNewReviews(apartmentId);
 

@@ -20,7 +20,9 @@ export const addApartment = async (
 			await apartmentDataService.addNewApartment(apartmentId, payload);
 			res.json({ msg: `Successfully added apartment ${apartmentId}` });
 		} else {
-			res.json({ msg: `${apartmentId} is not a valid booking apartment` });
+			res
+				.status(500)
+				.json({ msg: `${apartmentId} is not a valid booking apartment` });
 		}
 	} catch (error) {
 		return next(error);
