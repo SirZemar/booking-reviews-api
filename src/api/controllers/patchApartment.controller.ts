@@ -11,7 +11,7 @@ export const patchApartment = async (
 		const payload = req.body;
 
 		await apartmentDataService.patchApartment(apartmentId, payload);
-		res.json({ msg: `Successfully edited apartment ${apartmentId}` });
+		return res.json({ msg: `Successfully edited apartment ${apartmentId}` });
 	} catch (error) {
 		return next(error);
 	}

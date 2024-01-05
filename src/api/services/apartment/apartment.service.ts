@@ -1,7 +1,10 @@
 import { puppeteerApartmentService } from "../puppeteer";
 
-export const verifyBookingApartment = async (id: string) => {
+export const isBookingApartmentValid = async (id: string) => {
 	try {
+		if (id.length < 3) {
+			return false;
+		}
 		const page = await puppeteerApartmentService.createApartmentPage();
 		const response = await puppeteerApartmentService.gotoApartmentPage(
 			page,

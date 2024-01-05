@@ -10,7 +10,7 @@ export const deleteApartment = async (
 		const apartmentId = req.params.apartmentId;
 
 		await apartmentDataService.deleteApartment(apartmentId);
-		res.json({ msg: `Successfully deleted apartment ${apartmentId}` });
+		return res.json({ msg: `Successfully deleted apartment ${apartmentId}` });
 	} catch (error) {
 		return next(error);
 	}

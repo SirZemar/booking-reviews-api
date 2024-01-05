@@ -11,13 +11,13 @@ export const getApartments = async (
 		const apartmentsQuery = await reviewsDataService.getAllApartments();
 
 		if (apartmentsQuery.empty) {
-			res.json({ msg: "No apartments were found." });
+			return res.json({ msg: "No apartments were found." });
 		} else {
 			const apartments: Apartment[] = apartmentsQuery.docs.map(
 				(apartment) => apartment.data() as Apartment
 			);
 
-			res.send(apartments);
+			return res.send(apartments);
 		}
 	} catch (error) {
 		return next(error);

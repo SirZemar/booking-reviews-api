@@ -11,16 +11,18 @@ export const scrapeReviews = async (
 	try {
 		const apartmentId = req.params.apartmentId;
 
-		const isApartmentValid = await apartmentService.verifyBookingApartment(
+		const isApartmentValid = await apartmentService.isBookingApartmentValid(
 			apartmentId
 		);
 		if (!isApartmentValid) {
-			res.status(500).json({ msg: `${apartmentId} is not a valid apartment` });
+			return res
+				.status(500)
+				.json({ msg: `${apartmentId} is not a valid apartment` });
 		}
 		const scrapedReviews = await reviewsService.scrapeNewReviews(apartmentId);
 
 		if (scrapedReviews.length === 0) {
-			res.json({ msg: `There are no new reviews` });
+			return res.json({ msg: `There are no new reviews` });
 		}
 
 		// Handlers when new scrape of reviews is done
@@ -34,7 +36,7 @@ export const scrapeReviews = async (
 		// Handlers when new batch of reviews is created
 		await reviewsService.handleBatchReviewsCreate(apartmentId);
 
-		res.json({ msg: `Successfully added ${batch.length} new reviews` });
+		return res.json({ msg: `Successfully added ${batch.length} new reviews` });
 	} catch (error) {
 		return next(error);
 	}

@@ -12,15 +12,15 @@ export const addApartment = async (
 		const payload = req.body;
 
 		// Verify if booking apartment exist
-		const isApartmentValid = await apartmentService.verifyBookingApartment(
+		const isApartmentValid = await apartmentService.isBookingApartmentValid(
 			apartmentId
 		);
 
 		if (isApartmentValid) {
 			await apartmentDataService.addNewApartment(apartmentId, payload);
-			res.json({ msg: `Successfully added apartment ${apartmentId}` });
+			return res.json({ msg: `Successfully added apartment ${apartmentId}` });
 		} else {
-			res
+			return res
 				.status(500)
 				.json({ msg: `${apartmentId} is not a valid booking apartment` });
 		}

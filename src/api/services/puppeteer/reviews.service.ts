@@ -55,9 +55,7 @@ export const scrapeNumberOfTotalReviewsPages = async (
 	page: Page
 ): Promise<number> => {
 	try {
-
-		const pagination = await page.$("c-pagination");
-
+		const pagination = await page.$(".c-pagination");
 		if (!pagination) {
 			return 1;
 		}

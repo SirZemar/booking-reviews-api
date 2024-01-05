@@ -7,7 +7,7 @@ const collection = "apartments";
 export const addNewApartment = async (
 	id: string,
 	payload: Pick<Apartment, "name">
-) => {
+): Promise<void> => {
 	const db = getFirestore();
 	await db.collection(collection).doc(id).set({ id, name: payload.name });
 };
@@ -15,7 +15,7 @@ export const addNewApartment = async (
 export const patchApartment = async (
 	id: string,
 	payload: Partial<Apartment>
-) => {
+): Promise<void> => {
 	const db = getFirestore();
 	await db
 		.collection(collection)
@@ -23,12 +23,12 @@ export const patchApartment = async (
 		.set({ id, name: payload.name }, { merge: true });
 };
 
-export const deleteApartment = async (id: string) => {
+export const deleteApartment = async (id: string): Promise<void> => {
 	const db = getFirestore();
 	await db.collection(collection).doc(id).delete();
 };
 
-export const setLastReviewsScrape = async (id: string) => {
+export const setLastReviewsScrape = async (id: string): Promise<void> => {
 	const db = getFirestore();
 	const lastReviewsScrape = Timestamp.now();
 
@@ -38,7 +38,7 @@ export const setLastReviewsScrape = async (id: string) => {
 		.set({ lastReviewsScrape }, { merge: true });
 };
 
-export const setReviewsCount = async (id: string) => {
+export const setReviewsCount = async (id: string): Promise<void> => {
 	const db = getFirestore();
 
 	const reviewsCountQuery = await reviewsDataService.reviewsCount(id);
@@ -54,7 +54,7 @@ export const setReviewsCount = async (id: string) => {
 export const setReviewsRatingAverage = async (
 	id: string,
 	reviewsRatingAverage: number
-) => {
+): Promise<void> => {
 	const db = getFirestore();
 
 	// await db.collection(collection).doc(id).update({ reviewsAverage });
