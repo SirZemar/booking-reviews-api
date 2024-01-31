@@ -21,13 +21,14 @@ export const scrapeReviews = async (
 		}
 		const scrapedReviews = await reviewsService.scrapeNewReviews(apartmentId);
 
+		// Handlers when new scrape of reviews is done
+		await reviewsService.handleScrapeReviews(apartmentId);
+
 		if (scrapedReviews.length === 0) {
 			return res.json({ msg: `There are no new reviews` });
 		}
 
-		// Handlers when new scrape of reviews is done
-		await reviewsService.handleScrapeReviews(apartmentId);
-
+		// Handle if new reviews are found
 		const batch = await reviewsDataService.addReviewsBatchToApartment(
 			scrapedReviews,
 			apartmentId
