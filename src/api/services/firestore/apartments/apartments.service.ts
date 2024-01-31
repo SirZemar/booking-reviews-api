@@ -25,7 +25,8 @@ export const patchApartment = async (
 
 export const deleteApartment = async (id: string): Promise<void> => {
 	const db = getFirestore();
-	await db.collection(collection).doc(id).delete();
+	const docRef = db.collection(collection).doc(id);
+	await db.recursiveDelete(docRef);
 };
 
 export const setLastReviewsScrape = async (id: string): Promise<void> => {
