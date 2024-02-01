@@ -17,10 +17,7 @@ export const patchApartment = async (
 	payload: Partial<Apartment>
 ): Promise<void> => {
 	const db = getFirestore();
-	await db
-		.collection(collection)
-		.doc(id)
-		.set({ id, name: payload.name }, { merge: true });
+	await db.collection(collection).doc(id).set(payload, { merge: true });
 };
 
 export const deleteApartment = async (id: string): Promise<void> => {
