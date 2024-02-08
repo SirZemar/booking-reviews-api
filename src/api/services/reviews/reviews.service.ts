@@ -1,3 +1,4 @@
+import { StatusEnum } from "../../models/apartment.model";
 import { Review, ReviewRaw } from "../../models/review.model";
 import { convertBookingReviewDateToTimestamp } from "../../utils/convertBookingReviewDate";
 import { apartmentDataService } from "../firestore/apartments";
@@ -63,7 +64,6 @@ export const scrapeNewReviews = async (apartmentId: string) => {
 	} catch (error) {
 		throw new Error(`Failed to scrape new reviews. ${error}`);
 	}
-
 };
 
 export const handleBatchReviewsCreate = async (id: string) => {
@@ -81,8 +81,6 @@ export const handleBatchReviewsCreate = async (id: string) => {
 		const totalSum = reviewRatings.reduce((prev, n) => prev + n);
 		const reviewsAverage = totalSum / reviewRatings.length;
 		await apartmentDataService.setReviewsRatingAverage(id, reviewsAverage);
-
-		//
 	} catch (error) {
 		throw new Error(
 			`Failed when handling new batch of created reviews. ${error}`
@@ -93,6 +91,7 @@ export const handleBatchReviewsCreate = async (id: string) => {
 export const handleScrapeReviews = async (id: string) => {
 	try {
 		await apartmentDataService.setLastReviewsScrape(id);
+		await apartmentDataService.patchApartment(id, { status: StatusEnum.ready });
 	} catch (error) {
 		throw new Error(`Failed when handling last scrape reviews. ${error}`);
 	}

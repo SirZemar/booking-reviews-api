@@ -1,6 +1,10 @@
 import { Timestamp } from "firebase-admin/firestore";
 import { Review } from "./review.model";
 
+export enum StatusEnum {
+	pending = "pending",
+	ready = "ready",
+}
 export type Apartment = {
 	id: string;
 	reviewsRatingAverage: number;
@@ -8,4 +12,5 @@ export type Apartment = {
 	lastReviewsScrape: Timestamp;
 	reviews: Review[];
 	name: string;
+	status: StatusEnum.pending | StatusEnum.ready;
 };

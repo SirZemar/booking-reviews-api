@@ -1,6 +1,11 @@
 import { puppeteerApartmentService } from "../puppeteer";
 
-export const isBookingApartmentValid = async (id: string) => {
+/**
+ * Check if there is a booking page with the apartment id provided
+ * @param id 
+ * @returns Promise with a boololean
+ */
+export const isBookingApartmentValid = async (id: string): Promise<boolean> => {
 	try {
 		if (id.length < 3) {
 			return false;

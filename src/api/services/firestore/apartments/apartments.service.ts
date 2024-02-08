@@ -1,15 +1,36 @@
-import { Timestamp, getFirestore } from "firebase-admin/firestore";
+import {
+	DocumentSnapshot,
+	QuerySnapshot,
+	Timestamp,
+	getFirestore,
+} from "firebase-admin/firestore";
 import { reviewsDataService } from "../reviews";
 import { Apartment } from "../../../models";
+import { StatusEnum } from "../../../models/apartment.model";
+import { firestore } from "firebase-admin";
 
 const collection = "apartments";
+export const getAllApartments = async (): Promise<QuerySnapshot> => {
+	const db = firestore();
+	const querySnapshot = await db.collection(collection).get();
+	return querySnapshot;
+};
+
+export const getApartment = async (id: string): Promise<DocumentSnapshot> => {
+	const db = firestore();
+	const docSnapshot = await db.collection(collection).doc(id).get();
+	return docSnapshot;
+};
 
 export const addNewApartment = async (
 	id: string,
 	payload: Pick<Apartment, "name">
 ): Promise<void> => {
 	const db = getFirestore();
-	await db.collection(collection).doc(id).set({ id, name: payload.name });
+	await db
+		.collection(collection)
+		.doc(id)
+		.set({ id, name: payload.name, status: StatusEnum.pending });
 };
 
 export const patchApartment = async (

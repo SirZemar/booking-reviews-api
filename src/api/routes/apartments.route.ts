@@ -7,6 +7,7 @@ import bodyParser = require("body-parser");
 import { patchApartment } from "../controllers/patchApartment.controller";
 import { deleteApartment } from "../controllers/deleteApartment.controller";
 import { getApartment } from "../controllers/getApartment.controller";
+import { addReviews } from "../controllers/addReviews.controller";
 
 const apartmentsRouter = express.Router();
 
@@ -16,6 +17,11 @@ apartmentsRouter.get("/:apartmentId/scrapeReviews", scrapeReviews);
 apartmentsRouter.get("/:apartmentId/getReviewRatings", getReviewRatings);
 
 apartmentsRouter.post("/:apartmentId/add", bodyParser.json(), addApartment);
+apartmentsRouter.post(
+	"/:apartmentId/reviews/add",
+	bodyParser.json(),
+	addReviews
+);
 
 apartmentsRouter.patch(
 	"/:apartmentId/patch",

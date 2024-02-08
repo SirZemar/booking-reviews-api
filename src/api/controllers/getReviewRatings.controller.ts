@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { reviewsDataService } from "../services/firestore/reviews";
 import { Review } from "../models";
+import { apartmentDataService } from "../services/firestore/apartments";
 
 export const getReviewRatings = async (
 	req: Request,
@@ -10,7 +11,7 @@ export const getReviewRatings = async (
 	try {
 		const apartmentId = req.params.apartmentId;
 
-		const apartmentDoc = await reviewsDataService.getApartment(apartmentId);
+		const apartmentDoc = await apartmentDataService.getApartment(apartmentId);
 		if (!apartmentDoc.exists) {
 			return res.json({ msg: `Failed to find ${apartmentId}` });
 		}

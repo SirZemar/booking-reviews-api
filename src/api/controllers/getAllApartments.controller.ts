@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { reviewsDataService } from "../services/firestore/reviews";
 import { Apartment } from "../models/apartment.model";
+import { apartmentDataService } from "../services/firestore/apartments";
 
 export const getAllApartments = async (
 	req: Request,
@@ -8,7 +8,7 @@ export const getAllApartments = async (
 	next: NextFunction
 ) => {
 	try {
-		const apartmentsQuery = await reviewsDataService.getAllApartments();
+		const apartmentsQuery = await apartmentDataService.getAllApartments();
 
 		if (apartmentsQuery.empty) {
 			return res.status(500).json({ msg: "No apartments were found." });
