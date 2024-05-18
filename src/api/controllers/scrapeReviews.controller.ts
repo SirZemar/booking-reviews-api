@@ -9,14 +9,14 @@ export const scrapeReviews = async (
 ) => {
 	try {
 		const apartmentId = req.params.apartmentId;
-
 		const isApartmentValid = await apartmentService.isBookingApartmentValid(
 			apartmentId
 		);
 		if (!isApartmentValid) {
-			return res
-				.status(500)
-				.json({ msg: `${apartmentId} is not a valid apartment` });
+			return res.status(500).json({
+				msg: `${apartmentId} is not a valid apartment`,
+				id: apartmentId,
+			});
 		}
 
 		const scrapedReviews = await reviewsService.scrapeNewReviews(apartmentId);
@@ -24,7 +24,7 @@ export const scrapeReviews = async (
 		await reviewsService.handleScrapeReviews(apartmentId);
 
 		if (scrapedReviews.length === 0) {
-			return res.json({ msg: `There are no new reviews` });
+			return res.json({ msg: `There are no new reviews`, id: apartmentId });
 		}
 		return res.json(scrapedReviews);
 	} catch (error) {

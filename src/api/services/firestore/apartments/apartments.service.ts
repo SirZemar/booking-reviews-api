@@ -5,8 +5,11 @@ import {
 	getFirestore,
 } from "firebase-admin/firestore";
 import { reviewsDataService } from "../reviews";
-import { Apartment } from "../../../models";
-import { StatusEnum } from "../../../models/apartment.model";
+import {
+	AddApartment,
+	EditApartment,
+	StatusEnum,
+} from "../../../models/apartment.model";
 import { firestore } from "firebase-admin";
 
 const collection = "apartments";
@@ -23,22 +26,21 @@ export const getApartment = async (id: string): Promise<DocumentSnapshot> => {
 };
 
 export const addNewApartment = async (
-	id: string,
-	payload: Pick<Apartment, "name">
+	apartmentData: AddApartment
 ): Promise<void> => {
 	const db = getFirestore();
 	await db
 		.collection(collection)
-		.doc(id)
-		.set({ id, name: payload.name, status: StatusEnum.pending });
+		.doc(apartmentData.id)
+		.set({ ...apartmentData, status: StatusEnum.PENDING });
 };
 
-export const patchApartment = async (
-	id: string,
-	payload: Partial<Apartment>
-): Promise<void> => {
+export const patchApartment = async (apartmentData: EditApartment): Promise<void> => {
 	const db = getFirestore();
-	await db.collection(collection).doc(id).set(payload, { merge: true });
+	await db
+		.collection(collection)
+		.doc(apartmentData.id)
+		.set(apartmentData, { merge: true });
 };
 
 export const deleteApartment = async (id: string): Promise<void> => {
@@ -81,4 +83,18 @@ export const setReviewsRatingAverage = async (
 		.collection(collection)
 		.doc(id)
 		.set({ reviewsRatingAverage }, { merge: true });
+};
+
+//TODO Remove
+export const changeStatusDB = async () => {
+	const db = getFirestore();
+
+	const a = await db.collection(collection).get();
+
+	a.forEach((doc) =>
+		doc.ref.update({
+			status: "ready",
+			reviewsStatus: "ready",
+		})
+	);
 };

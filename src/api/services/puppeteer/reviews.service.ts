@@ -1,15 +1,20 @@
-import puppeteer, { HTTPRequest, Page } from "puppeteer";
+import puppeteer, { Browser, HTTPRequest, Page } from "puppeteer";
 import { ReviewRaw } from "../../models/review.model";
 
+// Launch puppeteer
+export const launchPuppeteer = async (): Promise<Browser> => {
+	const browser = await puppeteer.launch({
+		headless: true,
+		args: ["--no-sandbox", "--disable-setuid-sandbox", "--lang=pt-PT"],
+		timeout: 0,
+	});
+	return browser;
+};
 // Puppeteer service that creates page of booking reviews list
-export const createReviewsListPage = async (): Promise<Page> => {
+export const createReviewsListPage = async (
+	browser: Browser
+): Promise<Page> => {
 	try {
-		// Launch puppeteer
-		const browser = await puppeteer.launch({
-			headless: "new",
-			args: ["--no-sandbox", "--disable-setuid-sandbox"],
-		});
-
 		const page: Page = await browser.newPage();
 		await page.setUserAgent(
 			"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3738.0 Safari/537.36"

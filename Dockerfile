@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18.16.0
 
 RUN apt-get update && apt-get install gnupg wget -y && \
     wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/google-archive.gpg && \
@@ -12,8 +12,8 @@ WORKDIR /app
 COPY package*.json .
 
 # Install production dependencies.
-# RUN npm ci --omit=dev
-RUN npm install
+RUN npm ci
+# RUN npm install
 
 COPY . .
 

@@ -9,8 +9,10 @@ export const scrapeNewReviews = async (apartmentId: string) => {
 	try {
 		const reviews = [];
 
+		// set up a puppeteer browser
+		const browser = await puppeteerReviewsService.launchPuppeteer();
 		// Creates new page in booking review list and navigate to it
-		const page = await puppeteerReviewsService.createReviewsListPage();
+		const page = await puppeteerReviewsService.createReviewsListPage(browser);
 		await puppeteerReviewsService.goToReviewsListPage(page, apartmentId);
 
 		// Get value of total number reviews in the list
@@ -37,6 +39,7 @@ export const scrapeNewReviews = async (apartmentId: string) => {
 			// Reviews data is in a specific string format on booking and it needs to be converted into a timestamp
 			const scrapedReviews = scrapedReviewsRaw.map(
 				(review: ReviewRaw): Review => {
+					console.log(review.date);
 					const date = convertBookingReviewDateToTimestamp(review.date);
 					return { ...review, date };
 				}
@@ -60,6 +63,7 @@ export const scrapeNewReviews = async (apartmentId: string) => {
 				}
 			}
 		}
+		browser.close();
 		return reviews;
 	} catch (error) {
 		throw new Error(`Failed to scrape new reviews. ${error}`);
@@ -91,7 +95,10 @@ export const handleBatchReviewsCreate = async (id: string) => {
 export const handleScrapeReviews = async (id: string) => {
 	try {
 		await apartmentDataService.setLastReviewsScrape(id);
-		await apartmentDataService.patchApartment(id, { status: StatusEnum.ready });
+		await apartmentDataService.patchApartment({
+			id,
+			reviewStatus: StatusEnum.READY,
+		});
 	} catch (error) {
 		throw new Error(`Failed when handling last scrape reviews. ${error}`);
 	}

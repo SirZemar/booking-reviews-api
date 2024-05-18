@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { apartmentDataService } from "../services/firestore/apartments";
-import { Apartment } from "../models";
+import { EditApartment } from "../models/apartment.model";
 
 export const patchApartment = async (
 	req: Request,
@@ -9,10 +9,13 @@ export const patchApartment = async (
 ) => {
 	try {
 		const apartmentId = req.params.apartmentId;
-		const payload = req.body as Partial<Apartment>;
+		const apartmentData = req.body as EditApartment;
 
-		await apartmentDataService.patchApartment(apartmentId, payload);
-		return res.json({ msg: `Successfully edited apartment ${apartmentId}` });
+		await apartmentDataService.patchApartment(apartmentData);
+		return res.json({
+			msg: `Successfully edited apartment ${apartmentId}`,
+			id: apartmentId,
+		});
 	} catch (error) {
 		return next(error);
 	}

@@ -34,9 +34,10 @@ export const addReviews = async (
 		if (batch.length > 0) {
 			return res.json({
 				msg: `Successfully added ${batch.length} new reviews`,
+				id: apartmentId,
 			});
 		} else {
-			return res.json({ msg: `No reviews added` });
+			return res.json({ msg: `No reviews added`, id: apartmentId });
 		}
 	} catch (error) {
 		return next(error);

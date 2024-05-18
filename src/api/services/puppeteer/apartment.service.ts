@@ -4,7 +4,7 @@ export const createApartmentPage = async (): Promise<Page> => {
 	try {
 		// Launch puppeteer
 		const browser = await puppeteer.launch({
-			headless: "new",
+			headless: true,
 			args: ["--no-sandbox", "--disable-setuid-sandbox"],
 		});
 
@@ -34,13 +34,17 @@ export const gotoApartmentPage = async (
 	page: Page,
 	apartmentId: string
 ): Promise<HTTPResponse | null> => {
-	let url: string;
-	url = `https://www.booking.com/hotel/pt/${apartmentId}.pt-pt.html`;
+	let url = "";
+	try {
+		url = `https://www.booking.com/hotel/pt/${apartmentId}.pt-pt.html`;
 
-	const response = await page.goto(url);
-	// if (!response?.ok()) {
-	// 	throw new Error(`Booking apartment not found with url ${url}`);
-	// }
+		const response = await page.goto(url);
+		// if (!response?.ok()) {
+		// 	throw new Error(`Booking apartment not found with url ${url}`);
+		// }
 
-	return response;
+		return response;
+	} catch (error) {
+		throw new Error(`Failed to navigate to page ${url}. ${error}`);
+	}
 };
