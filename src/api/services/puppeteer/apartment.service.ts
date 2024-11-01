@@ -5,13 +5,16 @@ export const createApartmentPage = async (): Promise<Page> => {
 		// Launch puppeteer
 		const browser = await puppeteer.launch({
 			headless: true,
-			args: ["--no-sandbox", "--disable-setuid-sandbox"],
+			args: ["--no-sandbox", "--disable-setuid-sandbox", "--lang=pt-PT"],
 		});
 
 		const page: Page = await browser.newPage();
 		await page.setUserAgent(
 			"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3738.0 Safari/537.36"
 		);
+		await page.setExtraHTTPHeaders({
+			"Accept-Language": "pt-PT,pt;q=0.9"
+		})
 
 		// Allow request only of reviewlist
 		await page.setRequestInterception(true);
