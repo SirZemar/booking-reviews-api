@@ -16,3 +16,6 @@ node_modules/
 
 # firestore emulator data
 firestoreData
+
+# Private firebase key
+booking-reviews-api-key.json
