@@ -8,6 +8,7 @@ import { patchApartment } from "../controllers/patchApartment.controller";
 import { deleteApartment } from "../controllers/deleteApartment.controller";
 import { getApartment } from "../controllers/getApartment.controller";
 import { addReviews } from "../controllers/addReviews.controller";
+import { deleteOldReviews } from "../controllers/deleteOldReviews";
 
 const apartmentsRouter = express.Router();
 
@@ -15,6 +16,8 @@ apartmentsRouter.get("/", getAllApartments);
 apartmentsRouter.get("/:apartmentId", getApartment);
 apartmentsRouter.get("/:apartmentId/scrapeReviews", scrapeReviews);
 apartmentsRouter.get("/:apartmentId/getReviewRatings", getReviewRatings);
+
+apartmentsRouter.get("/:apartmentId/deleteOldReviews", deleteOldReviews);
 
 apartmentsRouter.post("/:apartmentId/add", bodyParser.json(), addApartment);
 apartmentsRouter.post(

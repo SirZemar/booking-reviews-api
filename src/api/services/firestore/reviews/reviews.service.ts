@@ -50,13 +50,46 @@ export const addReviewsBatchToApartment = async (
 	return await batch.commit();
 };
 
+export const deleteReviewsBatchUpToDate = async (
+	id: string,
+	date: FirebaseFirestore.Timestamp
+) => {
+	const db = getFirestore();
+	const batch = db.batch();
+
+	const querySnapshot = await db
+		.collection(collection)
+		.doc(id)
+		.collection(subCollection)
+		.where("date", "<", date)
+		.get();
+
+	querySnapshot.forEach((doc) => {
+		batch.delete(doc.ref);
+	});
+
+	await batch.commit();
+};
+
+export const test = async (id: string, date: FirebaseFirestore.Timestamp) => {
+	const db = getFirestore();
+
+	const querySnapshot = await db
+		.collection(collection)
+		.doc(id)
+		.collection(subCollection)
+		.where("date", "<", date)
+		.get();
+
+	return querySnapshot;
+};
 export const reviewsCount = async (id: string) => {
 	const db = getFirestore();
 
 	const aggregateQuery = await db
 		.collection(collection)
 		.doc(id)
-		.collection("reviews")
+		.collection(subCollection)
 		.count()
 		.get();
 
