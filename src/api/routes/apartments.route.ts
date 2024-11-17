@@ -31,5 +31,4 @@ apartmentsRouter.patch(
 
 apartmentsRouter.delete("/:apartmentId/delete", deleteApartment);
 
-
 export default apartmentsRouter;

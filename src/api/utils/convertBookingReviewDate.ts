@@ -10,7 +10,6 @@ const isScrapedMonthValid = (month: string): void => {
 };
 
 const isScrapedDayValid = (day: string): void => {
-	console.debug(day);
 	const dayNumber = parseInt(day);
 	const valid = dayNumber >= 1 && dayNumber <= 31;
 	if (!valid) {

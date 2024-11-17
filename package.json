@@ -5,7 +5,7 @@
 		"build": "tsc",
 		"build:watch": "tsc --watch",
 		"start": "node dist/index.js",
-		"dev": "nodemon dist/index.js"
+		"dev": "nodemon --legacy-watch dist/index.js"
 	},
 	"engines": {
 		"node": "18"

@@ -19,6 +19,9 @@ export const scrapeReviews = async (
 			});
 		}
 
+		// Booking deletes old reviews with more than 3 years
+		await reviewsService.deleteOldReviews(apartmentId);
+
 		const scrapedReviews = await reviewsService.scrapeNewReviews(apartmentId);
 
 		await reviewsService.handleScrapeReviews(apartmentId);

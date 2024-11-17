@@ -7,7 +7,6 @@ const router = express.Router();
 
 router.use("/apartments", apartmentsRouter);
 
-//TODO Remove
 router.get("/test", async (req: express.Request, res: express.Response) => {
 	const db = getFirestore();
 

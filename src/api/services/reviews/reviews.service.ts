@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase-admin/firestore";
 import { StatusEnum } from "../../models/apartment.model";
 import { Review, ReviewRaw } from "../../models/review.model";
 import { convertBookingReviewDateToTimestamp } from "../../utils/convertBookingReviewDate";
@@ -39,7 +40,6 @@ export const scrapeNewReviews = async (apartmentId: string) => {
 			// Reviews data is in a specific string format on booking and it needs to be converted into a timestamp
 			const scrapedReviews = scrapedReviewsRaw.map(
 				(review: ReviewRaw): Review => {
-					console.log(review.date);
 					const date = convertBookingReviewDateToTimestamp(review.date);
 					return { ...review, date };
 				}
@@ -143,4 +143,24 @@ export const filterNewReviews = (
 	}
 
 	return newReviews;
+};
+
+export const deleteOldReviews = async (id: string) => {
+	try {
+		// Get today's date
+		const today = new Date();
+
+		// Subtract 3 years and set time to the beginning of the day
+		const threeYearsAgo = new Date(
+			today.getFullYear() - 3,
+			today.getMonth(),
+			today.getDate()
+		);
+		threeYearsAgo.setHours(0, 0, 0, 0); // Ensure the time is 00:00:00
+
+		const date = Timestamp.fromDate(threeYearsAgo);
+		await reviewsDataService.deleteReviewsBatchUpToDate(id, date);
+	} catch (error) {
+		throw new Error(`Failed to delete old reviews`);
+	}
 };

@@ -13,8 +13,8 @@ export const createApartmentPage = async (): Promise<Page> => {
 			"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3738.0 Safari/537.36"
 		);
 		await page.setExtraHTTPHeaders({
-			"Accept-Language": "pt-PT,pt;q=0.9"
-		})
+			"Accept-Language": "pt-PT,pt;q=0.9",
+		});
 
 		// Allow request only of reviewlist
 		await page.setRequestInterception(true);
@@ -22,7 +22,6 @@ export const createApartmentPage = async (): Promise<Page> => {
 			if (!(request.resourceType() === "document")) {
 				request.abort();
 			} else {
-				console.log(request.url());
 				request.continue();
 			}
 		});
